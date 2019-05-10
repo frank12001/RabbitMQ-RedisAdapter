@@ -10,7 +10,7 @@
 
 ## Warning
  * Note that. You don't need change source code or re-deploy for most situation.
- * Just use the container registry-intl.cn-shanghai.aliyuncs.com/slither/mqadapter:dev
+ * Just use the container registry-intl.cn-shanghai.aliyuncs.com/slither/mqadapter:0.0.1
  
  
  
