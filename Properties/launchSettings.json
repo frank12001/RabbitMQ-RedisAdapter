@@ -1,0 +1,19 @@
+{
+  "profiles": {
+    "RabbitMQAdpater": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "RedisChannelname": "MyChannel",
+        "LivenessPort": "31000",
+        "MQVirualHost": "/",
+        "MQUserName": "guest",
+        "MQFilenameKeyInHeader": "ConfigName",
+        "MQExchangeName": "Config",
+        "MQPassword": "guest",
+        "ReadinessPort": "31001",
+        "MQHostName": "192.168.2.5",
+        "MQPort": "5672"
+      }
+    }
+  }
+}
