@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mqadapter
+data:
+  MQUserName: "guest"       # remote rabbitmq UserName.
+  MQExchangeName: "Config"  # remote rabbitmq ExchangeName.
+  MQPassword: "guest"       # remote rabbitmq Password.
+  MQVirualHost: "/"         # remote rabbitmq VirualHost.
+  MQHostName: "192.168.2.5" # remote rabbitmq ip.  
+  MQPort: "5672"            # remote rabbitmq port.
+  MQFilenameKeyInHeader: "ConfigName" # rabbitmq msg in header for the key in redis.
+  RedisChannelname: "MyChannel"  # the redis channel which was called when get the msg for rabbit. the msg in channel is the key for redis.
+  LivenessPort: "31000"  # readinessProbe. it's must same as live46 and line50.  
+  ReadinessPort: "31001" # livenessProbe.  it's must same as live47 and line55.   
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adapter
+spec:
+  selector:
+    matchLabels:
+      app: adapter
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: adapter
+    spec:
+      containers:
+#     //your application. you can
+#     - name: myapp
+#       image: dockerhub.myapp:v1
+#       imagePullPolicy: Always       
+      - name: myredis
+        image: redis
+        imagePullPolicy: Always 
+        ports:
+        - containerPort: 6379  
+      - name: adapter
+        image: registry-intl.cn-shanghai.aliyuncs.com/slither/mqadapter:dev
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 31000
+        - containerPort: 31001         
+        livenessProbe:
+          tcpSocket:
+            port: 31000
+          initialDelaySeconds: 5
+          periodSeconds: 2
+        readinessProbe:
+          tcpSocket:
+            port: 31001
+          initialDelaySeconds: 5
+          periodSeconds: 2          
+        envFrom:
+          - configMapRef:
+              name: mqadapter     
