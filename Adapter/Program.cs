@@ -5,7 +5,7 @@ using CSRedis;
 namespace RabbitMQAdpater
 {
     class Program
-    { 
+    {  
         private readonly static string[] Keys = new string[] { "RedisChannelname", "MQFilenameKeyInHeader", "ReadinessPort", "LivenessPort" };
 
         static void Main(string[] args)
