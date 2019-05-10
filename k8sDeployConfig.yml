@@ -39,7 +39,7 @@ spec:
         ports:
         - containerPort: 6379  
       - name: adapter
-        image: registry-intl.cn-shanghai.aliyuncs.com/slither/mqadapter:dev # change it
+        image: registry-intl.cn-shanghai.aliyuncs.com/slither/mqadapter:0.0.1
         imagePullPolicy: Always
         ports:
         - containerPort: 31000
