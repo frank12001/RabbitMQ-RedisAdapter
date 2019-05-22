@@ -6,12 +6,12 @@
         "RedisChannelname": "MyChannel",
         "LivenessPort": "31000",
         "MQVirualHost": "/",
-        "MQUserName": "guest",
+        "MQUserName": "RabbitmqProjectUser",
         "MQFilenameKeyInHeader": "ConfigName",
         "MQExchangeName": "Config",
-        "MQPassword": "guest",
+        "MQPassword": "1sadfgrtyrttawAPtetO",
         "ReadinessPort": "31001",
-        "MQHostName": "192.168.2.5",
+        "MQHostName": "35.221.247.26",
         "MQPort": "5672"
       }
     }

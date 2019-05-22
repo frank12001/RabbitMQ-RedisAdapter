@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
 using CSRedis;
 
 namespace RabbitMQAdpater
 {
     class Program
-    {  
-        private readonly static string[] Keys = new string[] { "RedisChannelname", "MQFilenameKeyInHeader", "ReadinessPort", "LivenessPort" };
+    {
+        private readonly static string[] Keys = new string[]
+            {"RedisChannelname", "MQFilenameKeyInHeader", "ReadinessPort", "LivenessPort"};
+
+        private static K8sTcpHeathCheck heathChecker;
 
         static void Main(string[] args)
         {
@@ -33,8 +39,8 @@ namespace RabbitMQAdpater
                 {
                     if (mq.Header != null && mq.Header.TryGetValue(MQFilenameKeyInHeader, out string header))
                     {
-                        //Console.WriteLine("header ConfigName : " + header);
-                        //Console.WriteLine(" Msg " + mq.Msg);
+                        Console.WriteLine("header ConfigName : " + header);
+                        Console.WriteLine(" Msg " + mq.Msg);
 
                         redis.Set(header, mq.Msg);
                         redis.Publish(RedisChannelname, header);
@@ -42,9 +48,11 @@ namespace RabbitMQAdpater
                     else
                         Console.WriteLine($"{LogTable.Msg2} {MQFilenameKeyInHeader}");
                 }
+
                 using (MQConnectObj mqConnection = MQListener.RabbitMQConnect(mqSetting, RabbitCallback))
                 {
                     Console.WriteLine(LogTable.Msg1);
+
                     bool LivenessCheck()
                     {
                         try
@@ -53,17 +61,19 @@ namespace RabbitMQAdpater
                         }
                         catch (Exception e)
                         {
+                            Console.WriteLine(e);
                             return false;
                         }
+
                         return (redis.IsConnected && mqConnection.Connection.IsOpen);
                     }
-                    K8sTcpHeathCheck heathChecker = new K8sTcpHeathCheck(ReadinessPort, LivenessPort, 
-                        () => { return (redis.IsConnected && mqConnection.Connection.IsOpen); }, 
-                        LivenessCheck);
 
+                    heathChecker = new K8sTcpHeathCheck(ReadinessPort, LivenessPort,
+                        () => { return (redis.IsConnected && mqConnection.Connection.IsOpen); },
+                        LivenessCheck);
                     while (true)
                     {
-                        System.Threading.Thread.Sleep(500);
+                        Thread.Sleep(1000);
                     }
                 }
             }
